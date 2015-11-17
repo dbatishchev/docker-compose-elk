@@ -1,0 +1,33 @@
+elasticsearch:
+    image: docker.io/elasticsearch
+    command: elasticsearch -Des.network.host=0.0.0.0
+    volumes_from:
+        - dc_elasticsearch
+    ports:
+        - "9200:9200"
+
+logstash:
+    image: docker.io/logstash
+    environment:
+        - TZ="Europe/Moscow"
+    ports:
+        - "12201:12201"
+        - "12201:12201/udp"
+    volumes:
+        - ./conf:/conf
+    links:
+        - elasticsearch
+    command: logstash -f /conf/gelf.conf
+
+kibana:
+    image: docker.io/kibana
+    links:
+        - elasticsearch
+    ports:
+        - "5601"
+
+dc_elasticsearch:
+    image: docker.io/busybox
+    command: "true"
+    volumes:
+        - /usr/share/elasticsearch/data
