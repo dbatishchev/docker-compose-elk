@@ -3,7 +3,7 @@ elasticsearch:
     command: elasticsearch -Des.network.host=0.0.0.0
     volumes_from:
         - dc_elasticsearch
-    ports:
+    expose:
         - "9200:9200"
 
 logstash:
